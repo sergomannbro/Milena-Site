@@ -1,0 +1,1027 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Meine Ordnung – Hobbys, Aktivitäten & To-Dos</title>
+
+  <!-- Optional: hübsche "Buch"-Schrift (fällt automatisch auf Serif zurück, wenn offline) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #ffd1dc;        /* babyrosa */
+      --card: rgba(255,255,255,.72);
+      --card2: rgba(255,255,255,.58);
+      --ink: #3a2a2a;       /* gut lesbar auf rosa */
+      --muted: rgba(58,42,42,.72);
+      --stroke: rgba(58,42,42,.14);
+      --shadow: 0 16px 40px rgba(58,42,42,.18);
+      --shadow2: 0 10px 24px rgba(58,42,42,.14);
+      --radius: 22px;
+      --radius2: 14px;
+      --gap: 14px;
+    }
+
+    *{ box-sizing:border-box; }
+    html, body{ height:100%; }
+    body{
+      margin:0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Merriweather", Georgia, "Times New Roman", Times, serif; /* "Buch"-Look */
+      line-height: 1.45;
+      overflow-x:hidden;
+    }
+
+    /* ---------- Hintergrund-Animationen (sanft, bewegt sich durchs Bild) ---------- */
+    .float-layer{
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow:hidden;
+    }
+    .float{
+      position:absolute;
+      width: 160px;
+      height: 160px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.65), rgba(255,255,255,0));
+      filter: blur(0.2px);
+      opacity:.75;
+      animation: drift linear infinite;
+      mix-blend-mode: soft-light;
+    }
+    .float.small{ width:110px; height:110px; opacity:.65; }
+    .float.tiny{ width:80px; height:80px; opacity:.55; }
+    @keyframes drift{
+      0%   { transform: translate(-15vw, 10vh) scale(1); }
+      100% { transform: translate(115vw, -10vh) scale(1.15); }
+    }
+
+    /* ---------- Layout ---------- */
+    .app{
+      position: relative;
+      z-index: 1;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 22px 16px 36px;
+    }
+
+    header{
+      display:flex;
+      gap: 16px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .brand{
+      display:flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 260px;
+    }
+    .brand h1{
+      font-size: clamp(22px, 3.2vw, 34px);
+      letter-spacing: .2px;
+      margin:0;
+    }
+    .brand p{
+      margin:0;
+      color: var(--muted);
+      max-width: 60ch;
+    }
+
+    .topbar{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: stretch;
+      justify-content:flex-end;
+    }
+
+    .pill{
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: 999px;
+      padding: 10px 12px;
+      box-shadow: var(--shadow2);
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      backdrop-filter: blur(8px);
+    }
+    .pill strong{ font-weight:700; }
+    .pill small{ color: var(--muted); }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 16px;
+      align-items:start;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      backdrop-filter: blur(10px);
+    }
+
+    .card h2{
+      margin: 0 0 12px;
+      font-size: 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+    }
+    .sub{
+      margin: -6px 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .row{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items:center;
+    }
+
+    label{
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    input, select, button, textarea{
+      font-family: inherit;
+      color: var(--ink);
+      border-radius: 12px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.78);
+      padding: 10px 11px;
+      outline: none;
+    }
+    textarea{ min-height: 40px; resize: vertical; }
+
+    input:focus, select:focus, textarea:focus{
+      box-shadow: 0 0 0 4px rgba(58,42,42,.08);
+    }
+
+    button{
+      cursor:pointer;
+      transition: transform .08s ease, box-shadow .2s ease, background .2s ease;
+      box-shadow: 0 10px 18px rgba(58,42,42,.12);
+      background: rgba(255,255,255,.85);
+      font-weight: 700;
+    }
+    button:hover{ transform: translateY(-1px); }
+    button:active{ transform: translateY(0); box-shadow: 0 6px 12px rgba(58,42,42,.10); }
+
+    .btn-ghost{
+      background: rgba(255,255,255,.55);
+      box-shadow: none;
+      font-weight: 700;
+    }
+
+    .divider{
+      height: 1px;
+      background: rgba(58,42,42,.12);
+      margin: 12px 0;
+    }
+
+    /* ---------- Listen ---------- */
+    .list{
+      display:flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .item{
+      background: var(--card2);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius2);
+      padding: 10px 12px;
+      display:grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items:center;
+    }
+    .item .meta{
+      display:flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .title{
+      font-weight:700;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .hint{
+      font-size: 12px;
+      color: var(--muted);
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .actions{
+      display:flex;
+      gap: 8px;
+      align-items:center;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.70);
+    }
+    .tag button{
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-weight: 800;
+      box-shadow: none;
+      background: rgba(58,42,42,.08);
+    }
+
+    .checkbox{
+      width: 20px;
+      height: 20px;
+      accent-color: rgba(58,42,42,.70);
+      cursor:pointer;
+    }
+
+    .priority{
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.55);
+      font-weight:700;
+    }
+    .p1{ background: rgba(255,255,255,.70); }
+    .p2{ background: rgba(255,255,255,.60); }
+    .p3{ background: rgba(255,255,255,.52); }
+
+    .overdue{
+      border-color: rgba(120, 30, 30, .28);
+      background: rgba(255,255,255,.55);
+      box-shadow: 0 10px 18px rgba(120,30,30,.10);
+    }
+    .done{
+      opacity: .70;
+      text-decoration: none;
+    }
+    .done .title{
+      text-decoration: line-through;
+      opacity: .85;
+    }
+
+    /* ---------- Footer ---------- */
+    footer{
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align:center;
+    }
+
+    /* kleine "Wellen"-Animation im Header */
+    .spark{
+      display:inline-block;
+      margin-left: 8px;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.65);
+      animation: pulse 1.8s ease-in-out infinite;
+      box-shadow: 0 0 0 0 rgba(255,255,255,.4);
+    }
+    @keyframes pulse{
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,255,255,.35); }
+      50%{ transform: scale(1.35); box-shadow: 0 0 0 10px rgba(255,255,255,0); }
+      100%{ transform: scale(1); box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Hintergrund-Drift-Bubbles -->
+  <div class="float-layer" aria-hidden="true">
+    <div class="float" style="top:12vh; left:-20vw; animation-duration: 38s; animation-delay: -8s;"></div>
+    <div class="float small" style="top:55vh; left:-25vw; animation-duration: 44s; animation-delay: -18s;"></div>
+    <div class="float tiny" style="top:78vh; left:-18vw; animation-duration: 34s; animation-delay: -2s;"></div>
+    <div class="float small" style="top:28vh; left:-30vw; animation-duration: 52s; animation-delay: -26s;"></div>
+    <div class="float tiny" style="top:6vh; left:-28vw; animation-duration: 48s; animation-delay: -30s;"></div>
+  </div>
+
+  <main class="app">
+    <header>
+      <div class="brand">
+        <h1>Meine Ordnung <span class="spark" aria-hidden="true"></span></h1>
+        <p>Babyrosa Dashboard für <strong>Hobbys</strong>, <strong>Aktivitäten</strong> und <strong>To-Dos</strong> mit Terminen, Abhaken & Zeiteinstellungen.</p>
+      </div>
+
+      <div class="topbar">
+        <div class="pill" id="clockPill">
+          <div>
+            <strong id="nowTime">—</strong><br/>
+            <small id="nowDate">—</small>
+          </div>
+          <div style="width:1px; height:32px; background: rgba(58,42,42,.14)"></div>
+          <div>
+            <small>Zeitzone</small><br/>
+            <strong id="tzLabel">—</strong>
+          </div>
+        </div>
+
+        <div class="pill">
+          <label for="localeSel" style="min-width: 96px;">Anzeige</label>
+          <select id="localeSel" title="Sprache/Format">
+            <option value="de-DE" selected>Deutsch (DE)</option>
+            <option value="en-GB">English (UK)</option>
+            <option value="en-US">English (US)</option>
+          </select>
+
+          <label for="h24" style="display:flex; align-items:center; gap:8px;">
+            <input id="h24" type="checkbox" class="checkbox" checked />
+            24h
+          </label>
+        </div>
+
+        <button class="btn-ghost" id="exportBtn" title="Speichert deine Daten als JSON-Datei">Export</button>
+        <button class="btn-ghost" id="importBtn" title="Importiert eine JSON-Datei">Import</button>
+        <input id="importFile" type="file" accept="application/json" hidden />
+      </div>
+    </header>
+
+    <section class="grid">
+      <!-- HOBBYS -->
+      <article class="card">
+        <h2>Hobbys <button class="btn-ghost" id="clearHobbiesBtn" title="Alle Hobbys löschen">Reset</button></h2>
+        <p class="sub">Kurze Sammlung als Tags. Klick auf × entfernt den Eintrag.</p>
+
+        <div class="row">
+          <input id="hobbyInput" type="text" placeholder="Neues Hobby (z. B. Zeichnen, Gaming, Lesen) …" style="flex:1; min-width: 240px;" />
+          <button id="addHobbyBtn">Hinzufügen</button>
+        </div>
+
+        <div class="divider"></div>
+        <div class="row" id="hobbyTags" style="gap: 10px;"></div>
+      </article>
+
+      <!-- AKTIVITÄTEN -->
+      <article class="card">
+        <h2>Aktivitäten <button class="btn-ghost" id="clearActivitiesBtn" title="Alle Aktivitäten löschen">Reset</button></h2>
+        <p class="sub">Plane Aktivitäten mit Datum/Uhrzeit & optionaler Dauer.</p>
+
+        <div class="row">
+          <input id="actTitle" type="text" placeholder="Aktivität (z. B. Spaziergang, Training) …" style="flex:1; min-width: 240px;" />
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <div>
+            <label for="actWhen">Start</label><br/>
+            <input id="actWhen" type="datetime-local" />
+          </div>
+          <div>
+            <label for="actDur">Dauer (Min.)</label><br/>
+            <input id="actDur" type="number" min="0" step="5" placeholder="z. B. 45" style="width: 130px;" />
+          </div>
+          <button id="addActBtn">Eintragen</button>
+        </div>
+
+        <div class="divider"></div>
+        <div class="list" id="activityList"></div>
+      </article>
+
+      <!-- TO-DO -->
+      <article class="card" style="grid-column: 1 / -1;">
+        <h2>To-Do-Liste mit Zielterminen <button class="btn-ghost" id="clearTodosBtn" title="Alle To-Dos löschen">Reset</button></h2>
+        <p class="sub">Mit Zieltermin, Priorität, optionaler Erinnerung (solange die Seite geöffnet ist) & Abhaken.</p>
+
+        <div class="row">
+          <input id="todoTitle" type="text" placeholder="To-Do (z. B. Bewerbung schreiben, Aquarium reinigen) …" style="flex:1; min-width: 240px;" />
+          <select id="todoPrio" title="Priorität">
+            <option value="1">Priorität 1 (hoch)</option>
+            <option value="2" selected>Priorität 2 (mittel)</option>
+            <option value="3">Priorität 3 (niedrig)</option>
+          </select>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <div>
+            <label for="todoDue">Zieltermin</label><br/>
+            <input id="todoDue" type="datetime-local" />
+          </div>
+          <div>
+            <label for="todoRem">Erinnerung (Min. vorher)</label><br/>
+            <input id="todoRem" type="number" min="0" step="5" placeholder="z. B. 30" style="width: 200px;" />
+          </div>
+          <button id="addTodoBtn">Hinzufügen</button>
+
+          <span style="flex:1"></span>
+
+          <label for="filterSel">Filter</label>
+          <select id="filterSel">
+            <option value="all" selected>Alle</option>
+            <option value="open">Offen</option>
+            <option value="done">Erledigt</option>
+            <option value="overdue">Überfällig</option>
+          </select>
+
+          <label for="sortSel">Sortierung</label>
+          <select id="sortSel">
+            <option value="dueAsc" selected>Zieltermin ↑</option>
+            <option value="dueDesc">Zieltermin ↓</option>
+            <option value="prio">Priorität</option>
+            <option value="createdDesc">Neu zuerst</option>
+          </select>
+        </div>
+
+        <div class="divider"></div>
+        <div class="list" id="todoList"></div>
+      </article>
+    </section>
+
+    <footer>
+      Speichert automatisch im Browser (LocalStorage). Export/Import möglich. Erinnerungen funktionieren, solange diese Seite geöffnet ist.
+    </footer>
+  </main>
+
+  <script>
+    // ---------------------------
+    // Storage / Helpers
+    // ---------------------------
+    const STORAGE_KEY = "babyrosa_dashboard_v1";
+
+    const state = loadState();
+    let reminderTimers = new Map(); // todoId -> timeoutId
+
+    function loadState(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return { hobbies: [], activities: [], todos: [], settings: { locale: "de-DE", hour12: false } };
+        const parsed = JSON.parse(raw);
+        return {
+          hobbies: Array.isArray(parsed.hobbies) ? parsed.hobbies : [],
+          activities: Array.isArray(parsed.activities) ? parsed.activities : [],
+          todos: Array.isArray(parsed.todos) ? parsed.todos : [],
+          settings: parsed.settings || { locale: "de-DE", hour12: false }
+        };
+      }catch{
+        return { hobbies: [], activities: [], todos: [], settings: { locale: "de-DE", hour12: false } };
+      }
+    }
+
+    function saveState(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function uid(){
+      return Math.random().toString(16).slice(2) + Date.now().toString(16);
+    }
+
+    function parseDT(value){
+      // datetime-local -> Date (lokal)
+      if(!value) return null;
+      const d = new Date(value);
+      return isNaN(d.getTime()) ? null : d;
+    }
+
+    function fmtDT(date){
+      if(!date) return "—";
+      const { locale, hour12 } = state.settings;
+      return new Intl.DateTimeFormat(locale, {
+        year: "numeric", month: "2-digit", day: "2-digit",
+        hour: "2-digit", minute: "2-digit",
+        hour12
+      }).format(date);
+    }
+
+    function fmtDate(date){
+      if(!date) return "—";
+      const { locale } = state.settings;
+      return new Intl.DateTimeFormat(locale, { weekday:"long", year:"numeric", month:"long", day:"2-digit" }).format(date);
+    }
+
+    function fmtTime(date){
+      if(!date) return "—";
+      const { locale, hour12 } = state.settings;
+      return new Intl.DateTimeFormat(locale, { hour:"2-digit", minute:"2-digit", hour12 }).format(date);
+    }
+
+    function now(){
+      return new Date();
+    }
+
+    function isOverdue(todo){
+      if(todo.done) return false;
+      if(!todo.due) return false;
+      return new Date(todo.due).getTime() < Date.now();
+    }
+
+    // ---------------------------
+    // Clock & Settings
+    // ---------------------------
+    const tzLabel = document.getElementById("tzLabel");
+    const nowTime = document.getElementById("nowTime");
+    const nowDate = document.getElementById("nowDate");
+    const localeSel = document.getElementById("localeSel");
+    const h24 = document.getElementById("h24");
+
+    tzLabel.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
+    localeSel.value = state.settings.locale || "de-DE";
+    h24.checked = !(state.settings.hour12);
+
+    function tick(){
+      const d = now();
+      nowTime.textContent = fmtTime(d);
+      nowDate.textContent = fmtDate(d);
+      requestAnimationFrame(() => {}); // kleine UI-Glättung
+    }
+    setInterval(tick, 1000);
+    tick();
+
+    localeSel.addEventListener("change", () => {
+      state.settings.locale = localeSel.value;
+      saveState();
+      renderAll();
+      tick();
+    });
+
+    h24.addEventListener("change", () => {
+      state.settings.hour12 = !h24.checked;
+      saveState();
+      renderAll();
+      tick();
+    });
+
+    // ---------------------------
+    // Hobbies
+    // ---------------------------
+    const hobbyInput = document.getElementById("hobbyInput");
+    const addHobbyBtn = document.getElementById("addHobbyBtn");
+    const hobbyTags = document.getElementById("hobbyTags");
+    const clearHobbiesBtn = document.getElementById("clearHobbiesBtn");
+
+    function addHobby(){
+      const text = (hobbyInput.value || "").trim();
+      if(!text) return;
+      if(state.hobbies.some(h => h.toLowerCase() === text.toLowerCase())){
+        hobbyInput.value = "";
+        return;
+      }
+      state.hobbies.push(text);
+      hobbyInput.value = "";
+      saveState();
+      renderHobbies();
+    }
+
+    addHobbyBtn.addEventListener("click", addHobby);
+    hobbyInput.addEventListener("keydown", (e) => { if(e.key === "Enter") addHobby(); });
+
+    clearHobbiesBtn.addEventListener("click", () => {
+      state.hobbies = [];
+      saveState();
+      renderHobbies();
+    });
+
+    function renderHobbies(){
+      hobbyTags.innerHTML = "";
+      if(state.hobbies.length === 0){
+        const empty = document.createElement("div");
+        empty.className = "sub";
+        empty.textContent = "Noch keine Hobbys eingetragen.";
+        hobbyTags.appendChild(empty);
+        return;
+      }
+
+      state.hobbies.forEach((hobby, idx) => {
+        const tag = document.createElement("div");
+        tag.className = "tag";
+        tag.innerHTML = `<span>${escapeHtml(hobby)}</span>`;
+        const x = document.createElement("button");
+        x.type = "button";
+        x.textContent = "×";
+        x.title = "Entfernen";
+        x.addEventListener("click", () => {
+          state.hobbies.splice(idx, 1);
+          saveState();
+          renderHobbies();
+        });
+        tag.appendChild(x);
+        hobbyTags.appendChild(tag);
+      });
+    }
+
+    // ---------------------------
+    // Activities
+    // ---------------------------
+    const actTitle = document.getElementById("actTitle");
+    const actWhen = document.getElementById("actWhen");
+    const actDur  = document.getElementById("actDur");
+    const addActBtn = document.getElementById("addActBtn");
+    const activityList = document.getElementById("activityList");
+    const clearActivitiesBtn = document.getElementById("clearActivitiesBtn");
+
+    clearActivitiesBtn.addEventListener("click", () => {
+      state.activities = [];
+      saveState();
+      renderActivities();
+    });
+
+    function addActivity(){
+      const title = (actTitle.value || "").trim();
+      const whenD = parseDT(actWhen.value);
+      const dur = Number(actDur.value || 0);
+
+      if(!title) return;
+
+      state.activities.push({
+        id: uid(),
+        title,
+        when: whenD ? whenD.toISOString() : null,
+        durationMin: (Number.isFinite(dur) && dur > 0) ? Math.round(dur) : null,
+        done: false,
+        createdAt: new Date().toISOString()
+      });
+
+      actTitle.value = "";
+      actDur.value = "";
+      // Startzeit nicht leeren, damit man mehrere schnell planen kann
+      saveState();
+      renderActivities();
+    }
+
+    addActBtn.addEventListener("click", addActivity);
+    actTitle.addEventListener("keydown", (e) => { if(e.key === "Enter") addActivity(); });
+
+    function renderActivities(){
+      activityList.innerHTML = "";
+
+      if(state.activities.length === 0){
+        activityList.innerHTML = `<div class="sub">Noch keine Aktivitäten geplant.</div>`;
+        return;
+      }
+
+      const sorted = [...state.activities].sort((a,b) => {
+        const ta = a.when ? new Date(a.when).getTime() : Infinity;
+        const tb = b.when ? new Date(b.when).getTime() : Infinity;
+        return ta - tb;
+      });
+
+      sorted.forEach(act => {
+        const item = document.createElement("div");
+        item.className = "item" + (act.done ? " done" : "");
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.className = "checkbox";
+        cb.checked = !!act.done;
+        cb.title = "Erledigt";
+        cb.addEventListener("change", () => {
+          const ref = state.activities.find(x => x.id === act.id);
+          if(ref){ ref.done = cb.checked; saveState(); renderActivities(); }
+        });
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        const whenText = act.when ? fmtDT(new Date(act.when)) : "ohne Zeit";
+        const durText = act.durationMin ? `Dauer: ${act.durationMin} Min.` : "Dauer: —";
+        meta.innerHTML = `
+          <div class="title">${escapeHtml(act.title)}</div>
+          <div class="hint"><span>Start: ${escapeHtml(whenText)}</span><span>${escapeHtml(durText)}</span></div>
+        `;
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+        const del = document.createElement("button");
+        del.className = "btn-ghost";
+        del.textContent = "Löschen";
+        del.addEventListener("click", () => {
+          state.activities = state.activities.filter(x => x.id !== act.id);
+          saveState();
+          renderActivities();
+        });
+
+        actions.appendChild(del);
+
+        item.appendChild(cb);
+        item.appendChild(meta);
+        item.appendChild(actions);
+        activityList.appendChild(item);
+      });
+    }
+
+    // ---------------------------
+    // Todos + reminders
+    // ---------------------------
+    const todoTitle = document.getElementById("todoTitle");
+    const todoPrio  = document.getElementById("todoPrio");
+    const todoDue   = document.getElementById("todoDue");
+    const todoRem   = document.getElementById("todoRem");
+    const addTodoBtn = document.getElementById("addTodoBtn");
+    const todoList  = document.getElementById("todoList");
+    const filterSel = document.getElementById("filterSel");
+    const sortSel   = document.getElementById("sortSel");
+    const clearTodosBtn = document.getElementById("clearTodosBtn");
+
+    clearTodosBtn.addEventListener("click", () => {
+      clearAllReminders();
+      state.todos = [];
+      saveState();
+      renderTodos();
+    });
+
+    function addTodo(){
+      const title = (todoTitle.value || "").trim();
+      const prio = Number(todoPrio.value || 2);
+      const dueD = parseDT(todoDue.value);
+      const remMin = Number(todoRem.value || 0);
+
+      if(!title) return;
+
+      const t = {
+        id: uid(),
+        title,
+        prio: [1,2,3].includes(prio) ? prio : 2,
+        due: dueD ? dueD.toISOString() : null,
+        remindMin: (Number.isFinite(remMin) && remMin > 0) ? Math.round(remMin) : null,
+        done: false,
+        createdAt: new Date().toISOString()
+      };
+
+      state.todos.push(t);
+      todoTitle.value = "";
+      todoRem.value = "";
+      saveState();
+
+      scheduleReminder(t);
+      renderTodos();
+    }
+
+    addTodoBtn.addEventListener("click", addTodo);
+    todoTitle.addEventListener("keydown", (e) => { if(e.key === "Enter") addTodo(); });
+
+    filterSel.addEventListener("change", renderTodos);
+    sortSel.addEventListener("change", renderTodos);
+
+    function renderTodos(){
+      todoList.innerHTML = "";
+
+      if(state.todos.length === 0){
+        todoList.innerHTML = `<div class="sub">Noch keine To-Dos. Trag eins ein – gerne mit Zieltermin.</div>`;
+        return;
+      }
+
+      let items = [...state.todos];
+
+      // Filter
+      const f = filterSel.value;
+      if(f === "open") items = items.filter(t => !t.done);
+      if(f === "done") items = items.filter(t => t.done);
+      if(f === "overdue") items = items.filter(t => isOverdue(t));
+
+      // Sort
+      const s = sortSel.value;
+      items.sort((a,b) => {
+        if(s === "prio") return (a.prio - b.prio) || byDue(a,b);
+        if(s === "createdDesc") return (new Date(b.createdAt) - new Date(a.createdAt));
+        if(s === "dueDesc") return -byDue(a,b);
+        return byDue(a,b); // dueAsc
+      });
+
+      function byDue(a,b){
+        const ta = a.due ? new Date(a.due).getTime() : Infinity;
+        const tb = b.due ? new Date(b.due).getTime() : Infinity;
+        return ta - tb;
+      }
+
+      items.forEach(t => {
+        const item = document.createElement("div");
+        const overdue = isOverdue(t);
+        item.className = "item" + (t.done ? " done" : "") + (overdue ? " overdue" : "");
+
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.className = "checkbox";
+        cb.checked = !!t.done;
+        cb.title = "Erledigt";
+        cb.addEventListener("change", () => {
+          const ref = state.todos.find(x => x.id === t.id);
+          if(ref){
+            ref.done = cb.checked;
+            saveState();
+            // Reminder ggf. entfernen, wenn erledigt
+            if(ref.done) cancelReminder(ref.id);
+            else scheduleReminder(ref);
+            renderTodos();
+          }
+        });
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        const dueText = t.due ? fmtDT(new Date(t.due)) : "ohne Termin";
+        const remText = t.remindMin ? `Erinnerung: ${t.remindMin} Min. vorher` : "Erinnerung: —";
+        meta.innerHTML = `
+          <div class="title">${escapeHtml(t.title)}</div>
+          <div class="hint">
+            <span>Ziel: ${escapeHtml(dueText)}</span>
+            <span>${escapeHtml(remText)}</span>
+            <span class="priority p${t.prio}">P${t.prio}</span>
+            ${overdue ? `<span class="priority" style="border-color: rgba(120,30,30,.3);">Überfällig</span>` : ``}
+          </div>
+        `;
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+
+        const edit = document.createElement("button");
+        edit.className = "btn-ghost";
+        edit.textContent = "Bearbeiten";
+        edit.addEventListener("click", () => openEditTodo(t.id));
+
+        const del = document.createElement("button");
+        del.className = "btn-ghost";
+        del.textContent = "Löschen";
+        del.addEventListener("click", () => {
+          cancelReminder(t.id);
+          state.todos = state.todos.filter(x => x.id !== t.id);
+          saveState();
+          renderTodos();
+        });
+
+        actions.appendChild(edit);
+        actions.appendChild(del);
+
+        item.appendChild(cb);
+        item.appendChild(meta);
+        item.appendChild(actions);
+        todoList.appendChild(item);
+      });
+    }
+
+    function openEditTodo(id){
+      const t = state.todos.find(x => x.id === id);
+      if(!t) return;
+
+      const newTitle = prompt("To-Do Titel:", t.title);
+      if(newTitle === null) return;
+
+      const newDue = prompt("Zieltermin (Format: YYYY-MM-DDTHH:MM) oder leer:", t.due ? toDTLocalString(new Date(t.due)) : "");
+      if(newDue === null) return;
+
+      const newPrio = prompt("Priorität (1/2/3):", String(t.prio));
+      if(newPrio === null) return;
+
+      const newRem = prompt("Erinnerung (Min. vorher) oder leer:", t.remindMin ? String(t.remindMin) : "");
+      if(newRem === null) return;
+
+      t.title = (newTitle || "").trim() || t.title;
+      t.prio = [1,2,3].includes(Number(newPrio)) ? Number(newPrio) : t.prio;
+
+      const d = (newDue || "").trim() ? parseDT((newDue || "").trim()) : null;
+      t.due = d ? d.toISOString() : null;
+
+      const rm = Number((newRem || "").trim());
+      t.remindMin = (Number.isFinite(rm) && rm > 0) ? Math.round(rm) : null;
+
+      saveState();
+      cancelReminder(t.id);
+      scheduleReminder(t);
+      renderTodos();
+    }
+
+    function toDTLocalString(d){
+      // Date -> YYYY-MM-DDTHH:MM (lokal)
+      const pad = n => String(n).padStart(2,"0");
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    // Reminder: einfache Browser-Alerts (solange Seite offen)
+    function scheduleReminder(todo){
+      cancelReminder(todo.id);
+      if(todo.done) return;
+      if(!todo.due || !todo.remindMin) return;
+
+      const dueMs = new Date(todo.due).getTime();
+      const fireAt = dueMs - (todo.remindMin * 60_000);
+      const delay = fireAt - Date.now();
+
+      if(delay <= 0) return; // Termin/Reminder liegt in der Vergangenheit
+
+      const timeoutId = setTimeout(() => {
+        alert(`⏰ Erinnerung: "${todo.title}"\nZieltermin: ${todo.due ? fmtDT(new Date(todo.due)) : "—"}`);
+        reminderTimers.delete(todo.id);
+      }, delay);
+
+      reminderTimers.set(todo.id, timeoutId);
+    }
+
+    function cancelReminder(todoId){
+      const id = reminderTimers.get(todoId);
+      if(id){
+        clearTimeout(id);
+        reminderTimers.delete(todoId);
+      }
+    }
+
+    function clearAllReminders(){
+      for(const [k,v] of reminderTimers.entries()){
+        clearTimeout(v);
+      }
+      reminderTimers.clear();
+    }
+
+    // Beim Laden: Reminder für alle offenen To-Dos planen
+    function rescheduleAllReminders(){
+      clearAllReminders();
+      state.todos.forEach(scheduleReminder);
+    }
+
+    // ---------------------------
+    // Export / Import
+    // ---------------------------
+    const exportBtn = document.getElementById("exportBtn");
+    const importBtn = document.getElementById("importBtn");
+    const importFile = document.getElementById("importFile");
+
+    exportBtn.addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "babyrosa-dashboard.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    importBtn.addEventListener("click", () => importFile.click());
+
+    importFile.addEventListener("change", async () => {
+      const file = importFile.files && importFile.files[0];
+      if(!file) return;
+      try{
+        const text = await file.text();
+        const parsed = JSON.parse(text);
+
+        // Minimal validieren
+        state.hobbies = Array.isArray(parsed.hobbies) ? parsed.hobbies : [];
+        state.activities = Array.isArray(parsed.activities) ? parsed.activities : [];
+        state.todos = Array.isArray(parsed.todos) ? parsed.todos : [];
+        state.settings = parsed.settings || state.settings;
+
+        localeSel.value = state.settings.locale || "de-DE";
+        h24.checked = !(state.settings.hour12);
+
+        saveState();
+        renderAll();
+        rescheduleAllReminders();
+      }catch{
+        alert("Import fehlgeschlagen: Datei ist kein gültiges JSON.");
+      }finally{
+        importFile.value = "";
+      }
+    });
+
+    // ---------------------------
+    // Render
+    // ---------------------------
+    function renderAll(){
+      renderHobbies();
+      renderActivities();
+      renderTodos();
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    // Initial render
+    renderAll();
+    rescheduleAllReminders();
+  </script>
+</body>
+</html>
