@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fischepedia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #042a3b;
+      --bg-mid: #07506b;
+      --bg-light: #0f7ca0;
+      --card: rgba(5, 35, 53, 0.72);
+      --card-border: rgba(181, 233, 255, 0.3);
+      --text: #e7fbff;
+      --muted: #b7e8f3;
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: "Nunito", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 10% 15%, rgba(95, 228, 255, 0.15), transparent 36%),
+        radial-gradient(circle at 85% 30%, rgba(156, 255, 212, 0.16), transparent 34%),
+        linear-gradient(165deg, var(--bg-deep), var(--bg-mid) 42%, var(--bg-light));
+      min-height: 100vh;
+    }
+
+    main {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 24px 16px 36px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      background: rgba(0, 25, 41, 0.48);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .back {
+      color: #042234;
+      text-decoration: none;
+      font-weight: 800;
+      background: linear-gradient(135deg, #2dc5ff, #15f3de);
+      padding: 10px 14px;
+      border-radius: 12px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(240px, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .content { padding: 12px; }
+    h2 { margin: 0 0 6px; font-size: 21px; }
+    .meta { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+    ul { margin: 0; padding-left: 18px; line-height: 1.38; font-size: 14px; }
+
+    @media (max-width: 980px) {
+      .cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="topbar">
+      <div>
+        <h1>Fischepedia</h1>
+        <p>Alle Fisch-Infos liegen auf dieser eigenen Seite.</p>
+      </div>
+      <a class="back" href="index.html">Zurück zur Startseite</a>
+    </header>
+
+    <section class="cards">
+      <article class="card">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6e/Paracheirodon_innesi_6cm.jpg" alt="Neon-Salmler im Aquarium" loading="lazy">
+        <div class="content">
+          <h2>Neon-Salmler</h2>
+          <div class="meta">Paracheirodon innesi • Schwarmfisch • friedlich</div>
+          <ul>
+            <li>Gruppengröße: mindestens 10 bis 12 Tiere, damit sie sich sicher fühlen und natürliches Schwarmverhalten zeigen.</li>
+            <li>Wasserwerte: 22 bis 26 °C, pH 5,5 bis 7,0, weiches bis mittelhartes Wasser.</li>
+            <li>Einrichtung: dichter Pflanzenrand, freie Schwimmzone, dunkler Bodengrund.</li>
+            <li>Futter: kleines Flockenfutter, Mikrogranulat, Cyclops und Artemia in kleinen Portionen.</li>
+            <li>Pflege: gleichmäßige Wasserqualität und regelmäßige Teilwasserwechsel fördern Farben und Vitalität.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="card">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/9b/Poecilia_reticulata_male.jpg" alt="Männlicher Guppy" loading="lazy">
+        <div class="content">
+          <h2>Guppy</h2>
+          <div class="meta">Poecilia reticulata • lebendgebärend • aktiv</div>
+          <ul>
+            <li>Wasserwerte: 23 bis 27 °C, pH 7,0 bis 8,0, eher hartes Wasser.</li>
+            <li>Gruppenaufbau: sinnvoll ist 1 Männchen auf 2 bis 3 Weibchen.</li>
+            <li>Fütterung: abwechslungsreich mit pflanzlichen und proteinreichen Komponenten.</li>
+            <li>Vermehrung: sehr häufig; Nachwuchsplanung ist wichtig, um Überbesatz zu vermeiden.</li>
+            <li>Gesundheit: auf Flossenklemmen, Weißpünktchen und Verhaltensänderungen achten.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="card">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/58/Neocaridina_denticulata_sinensis.jpg" alt="Süßwassergarnele auf Pflanze" loading="lazy">
+        <div class="content">
+          <h2>Süßwassergarnelen</h2>
+          <div class="meta">Neocaridina davidi (Beispiel) • Aufwuchsfresser • nützlich</div>
+          <ul>
+            <li>Wasserwerte: 20 bis 25 °C, pH 6,5 bis 7,8, stabile Härte wichtig für Häutung.</li>
+            <li>Das Aquarium sollte gut eingefahren sein, bevor Garnelen einziehen.</li>
+            <li>Futter: spezielles Garnelenfutter, Laub, Gemüsechips und Biofilm-Aufwuchs.</li>
+            <li>Achtung bei Kupfer: kupferhaltige Mittel sind oft unverträglich für Garnelen.</li>
+            <li>Viele Verstecke mit Moosen, Wurzeln und Röhren verbessern Überlebensrate und Wohlbefinden.</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
